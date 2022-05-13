@@ -1,6 +1,5 @@
 import { Notification } from "electron";
 import {
-  DEFAULT_CONDITION_DELAY,
   DEFAULT_FIRE_NOTIFICATION_TIMEOUT,
   DEFAULT_NOTIFICATION_TIMEOUT
 } from "../common/types/constants";
@@ -9,7 +8,6 @@ import {
   NotificationTimeoutError
 } from "../common/types/errors";
 import log from "electron-log";
-import { Throwing, toStopCondition } from "../common/types/commands";
 
 export type NotificationRequest = {
   message: string;
@@ -30,15 +28,12 @@ export function fireOsNotification(message: string, noTimeout?: boolean) {
 }
 
 export async function sendOsNotification(
-  message: NotificationRequest | string,
-  checkStopped?: Throwing
+  message: NotificationRequest | string
 ): Promise<typeof message extends NotificationRequest
   ? typeof message["reply"] extends true
     ? string
     : void
   : void> {
-  const stopCondition = checkStopped ? toStopCondition(checkStopped) : null;
-
   const request: NotificationRequest =
     typeof message === "string"
       ? {
@@ -72,12 +67,6 @@ export async function sendOsNotification(
           notification.close();
         }
       }, request.timeout);
-    }
-
-    if (stopCondition) {
-      stopInterval = setInterval(() => {
-        if (stopCondition()) notification.close();
-      }, DEFAULT_CONDITION_DELAY);
     }
 
     const resolvePromise = (...args: any[]) => {

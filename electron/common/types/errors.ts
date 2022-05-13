@@ -26,28 +26,6 @@ export class UserStoppedError extends Error {
   name = UserStoppedError.name;
 }
 
-export class BatchErrorWrapper extends Error {
-  name = BatchErrorWrapper.name;
-  inner: unknown;
-  videoIndex: number;
-  filePath: string;
-
-  constructor(inner: unknown, videoIndex: number, filePath: string) {
-    super();
-    this.inner = inner;
-    this.videoIndex = videoIndex;
-    this.filePath = filePath;
-  }
-}
-
-export class CommandStoppedError extends UserStoppedError {
-  name = CommandStoppedError.name;
-
-  constructor(cmd: string) {
-    super(`Command ${cmd} has been stopped.`);
-  }
-}
-
 export class ClosedNotificationError extends UserStoppedError {
   name = ClosedNotificationError.name;
 
